@@ -1,0 +1,693 @@
+definitions:
+  dbmodel.Cat:
+    properties:
+      age:
+        type: integer
+      breed:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+      visits:
+        items:
+          $ref: '#/definitions/dbmodel.Visit'
+        type: array
+      weigth:
+        type: integer
+    type: object
+  dbmodel.Treatment:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+      visit:
+        $ref: '#/definitions/dbmodel.Visit'
+      visit_id:
+        type: integer
+    type: object
+  dbmodel.Visit:
+    properties:
+      cat:
+        $ref: '#/definitions/dbmodel.Cat'
+      cat_id:
+        type: integer
+      created_at:
+        type: string
+      date:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: integer
+      motif:
+        type: string
+      treatments:
+        items:
+          $ref: '#/definitions/dbmodel.Treatment'
+        type: array
+      updated_at:
+        type: string
+      veterinaire:
+        type: string
+    type: object
+  models.CatRequest:
+    properties:
+      age:
+        type: integer
+      breed:
+        type: string
+      name:
+        type: string
+      weigth:
+        type: integer
+    type: object
+  models.TreatmentRequest:
+    properties:
+      name:
+        type: string
+    type: object
+  models.VisitRequest:
+    properties:
+      date:
+        type: string
+      motif:
+        type: string
+      veterinaire:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /cats:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dbmodel.Cat'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List cats
+      tags:
+      - cats
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Cat payload
+        in: body
+        name: cat
+        required: true
+        schema:
+          $ref: '#/definitions/models.CatRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dbmodel.Cat'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a cat
+      tags:
+      - cats
+  /cats/{id}:
+    delete:
+      parameters:
+      - description: Cat ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a cat
+      tags:
+      - cats
+    get:
+      parameters:
+      - description: Cat ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dbmodel.Cat'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get a cat by ID
+      tags:
+      - cats
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Cat ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Cat payload
+        in: body
+        name: cat
+        required: true
+        schema:
+          $ref: '#/definitions/models.CatRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dbmodel.Cat'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a cat
+      tags:
+      - cats
+  /cats/{id}/history:
+    get:
+      parameters:
+      - description: Cat ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get a cat history (visits)
+      tags:
+      - cats
+  /cats/{id}/visits:
+    get:
+      parameters:
+      - description: Cat ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dbmodel.Visit'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get visits by Cat ID
+      tags:
+      - visits
+  /treatments:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dbmodel.Treatment'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all treatments
+      tags:
+      - treatments
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Treatment payload
+        in: body
+        name: treatment
+        required: true
+        schema:
+          $ref: '#/definitions/models.TreatmentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dbmodel.Treatment'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new treatment
+      tags:
+      - treatments
+  /treatments/{id}:
+    delete:
+      parameters:
+      - description: Treatment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a treatment
+      tags:
+      - treatments
+    get:
+      parameters:
+      - description: Treatment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dbmodel.Treatment'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get a treatment by ID
+      tags:
+      - treatments
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Treatment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Treatment payload
+        in: body
+        name: treatment
+        required: true
+        schema:
+          $ref: '#/definitions/models.TreatmentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dbmodel.Treatment'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a treatment
+      tags:
+      - treatments
+  /visits:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dbmodel.Visit'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all visits
+      tags:
+      - visits
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Visit payload
+        in: body
+        name: visit
+        required: true
+        schema:
+          $ref: '#/definitions/models.VisitRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dbmodel.Visit'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new visit
+      tags:
+      - visits
+  /visits/{id}:
+    delete:
+      parameters:
+      - description: Visit ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a visit
+      tags:
+      - visits
+    get:
+      parameters:
+      - description: Visit ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dbmodel.Visit'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get a visit by ID
+      tags:
+      - visits
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Visit ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Visit payload
+        in: body
+        name: visit
+        required: true
+        schema:
+          $ref: '#/definitions/models.VisitRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dbmodel.Visit'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a visit
+      tags:
+      - visits
+  /visits/{id}/treatments:
+    get:
+      parameters:
+      - description: Visit ID
+        in: path
+        name: visit_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dbmodel.Treatment'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get treatments by Visit ID
+      tags:
+      - treatments
+  /visits/filter:
+    get:
+      parameters:
+      - description: Motif
+        in: query
+        name: motif
+        type: string
+      - description: Veterinaire
+        in: query
+        name: veterinaire
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dbmodel.Visit'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Filter visits by motif or veterinaire
+      tags:
+      - visits
+swagger: "2.0"
