@@ -20,14 +20,14 @@ import (
 func Routes(configuration *config.Config) *chi.Mux {
 	router := chi.NewRouter()
 
-	router.Mount("/api/v1/cats", cat.Routes(configuration))
-	router.Mount("/api/v1/visits", visit.Routes(configuration))
-	router.Mount("/api/v1/treatments", treatment.Routes(configuration))
-	router.Mount("/api/v1/users", user.Routes(configuration))
 	router.Mount("/login", authentification.Routes(configuration))
 
 	router.Group(func(r chi.Router) {
 		r.Use(authentification.AuthMiddleware("your_secret_key"))
+		r.Mount("/api/v1/cats", cat.Routes(configuration))
+		r.Mount("/api/v1/visits", visit.Routes(configuration))
+		r.Mount("/api/v1/treatments", treatment.Routes(configuration))
+		r.Mount("/api/v1/users", user.Routes(configuration))
 		r.Get("/protected", func(w http.ResponseWriter, req *http.Request) {
 			user := authentification.GetUserFromContext(req.Context())
 			w.Write([]byte(fmt.Sprintf("Welcome, %s!", user)))
