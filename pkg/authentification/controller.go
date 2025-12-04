@@ -5,10 +5,8 @@ import (
 	"net/http"
 
 	"github.com/emmanuelYohore/vet-clinic-api/config"
-	// "github.com/emmanuelYohore/vet-clinic-api/pkg/authentification"
 	"github.com/emmanuelYohore/vet-clinic-api/pkg/models"
 	"github.com/go-chi/render"
-	// "github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -42,15 +40,35 @@ func (c *AuthConfig) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	token, err := GenerateToken("your_secret_key", payload.Email)
-	    // refreshToken, _ := authentification.GenerateRefreshToken(payload.Email)
+	refreshToken, _ := GenerateRefreshToken(payload.Email)
 
+	user.RefreshToken = refreshToken
+	c.UserRepository.Update(user)
 	if err != nil {
 		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"token": token})
+	json.NewEncoder(w).Encode(map[string]string{"token": token, "refresh_token": refreshToken})
+}
+
+func (c *AuthConfig) RefreshToken(w http.ResponseWriter, r *http.Request) {
+	payload := &models.UserRequest{}
+	if err := render.Bind(r, payload); err != nil {
+		render.Status(r, http.StatusBadRequest)
+		render.JSON(w, r, map[string]string{
+			"error": "invalid request payload",
+		})
+		return
+	}
+
+	newToken, err := GenerateToken("your_secret_key", payload.Email)
+	if err != nil {
+		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"token": newToken})
 }

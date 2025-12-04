@@ -10,6 +10,7 @@ func Routes(configuration *config.Config) *chi.Mux {
 	router := chi.NewRouter()
 
 	router.Post("/", authConfig.LoginHandler)
+	router.Post("/refresh", authConfig.RefreshToken)
 
 	return router
 }
