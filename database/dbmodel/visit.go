@@ -7,17 +7,17 @@ import (
 )
 
 type Visit struct {
-	ID          uint       `gorm:"primarykey" json:"id"`
-	CreatedAt   time.Time  `json:"created_at"`
-	UpdatedAt   time.Time  `json:"updated_at"`
-	DeletedAt   *time.Time `gorm:"index" json:"deleted_at,omitempty"`
-	Date        time.Time  `json:"date"`
-	Motif       string     `json:"motif"`
-	Veterinaire string     `json:"veterinaire"`
+	ID          uint `gorm:"primarykey"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   *time.Time
+	Date        time.Time
+	Motif       string `gorm:"varchar(255)"`
+	Veterinaire string
 
-	CatID      uint        `json:"cat_id"`
-	Cat        Cat         `gorm:"foreignKey:CatID" json:"cat"`
-	Treatments []Treatment `gorm:"constraint:OnDelete:CASCADE;" json:"treatments,omitempty"`
+	CatID      uint
+	Cat        Cat         `gorm:"foreignKey:CatID"`
+	Treatments []Treatment `gorm:"constraint:OnDelete:CASCADE;"`
 }
 
 type VisitRepository interface {

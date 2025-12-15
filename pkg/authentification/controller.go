@@ -40,8 +40,13 @@ func (c *AuthConfig) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := GenerateToken("your_secret_key", payload.Email)
-	refreshToken, _ := GenerateRefreshToken(payload.Email)
+	userRole := user.Role
+	if userRole == "" {
+		userRole = "user"
+	}
+
+	token, err := GenerateToken("your_secret_key", payload.Email, userRole)
+	refreshToken, _ := GenerateRefreshToken(payload.Email, userRole)
 
 	user.RefreshToken = refreshToken
 	c.UserRepository.Update(user)
@@ -64,7 +69,18 @@ func (c *AuthConfig) RefreshToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newToken, err := GenerateToken("your_secret_key", payload.Email)
+	user, err := c.UserRepository.GetUserByEmail(payload.Email)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusUnauthorized)
+		return
+	}
+
+	userRole := user.Role
+	if userRole == "" {
+		userRole = "user"
+	}
+
+	newToken, err := GenerateToken("your_secret_key", payload.Email, userRole)
 	if err != nil {
 		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
 		return

@@ -7,15 +7,15 @@ import (
 )
 
 type Cat struct {
-	ID        uint       `gorm:"primarykey" json:"id"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
-	DeletedAt *time.Time `gorm:"index" json:"deleted_at,omitempty"`
-	Name      string     `json:"name"`
-	Age       int        `json:"age"`
-	Breed     string     `json:"breed"`
-	Weigth    int        `json:"weigth"`
-	Visits    []Visit    `gorm:"foreignKey:CatID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"visits"`
+	ID        uint `gorm:"primarykey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time
+	Name      string
+	Age       int `gorm:"type:int"`
+	Breed     string
+	Weigth    int     `gorm:"type:int"`
+	Visits    []Visit `gorm:"foreignKey:CatID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 type CatRepository interface {

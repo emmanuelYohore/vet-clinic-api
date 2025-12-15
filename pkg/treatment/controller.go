@@ -54,6 +54,7 @@ func (config *TreatmentConfig) CreateTreatmentHandler(w http.ResponseWriter, r *
 	}
 
 	render.Status(r, http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
 	render.JSON(w, r, savedTreatment)
 }
 
@@ -74,6 +75,8 @@ func (config *TreatmentConfig) GetAllTreatmentsHandler(w http.ResponseWriter, r 
 		return
 	}
 
+	render.Status(r, http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 	render.JSON(w, r, treatments)
 }
 
@@ -105,7 +108,8 @@ func (config *TreatmentConfig) GetTreatmentByIDHandler(w http.ResponseWriter, r 
 		})
 		return
 	}
-
+	render.Status(r, http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 	render.JSON(w, r, treatment)
 }
 
@@ -160,7 +164,8 @@ func (config *TreatmentConfig) UpdateTreatmentHandler(w http.ResponseWriter, r *
 		})
 		return
 	}
-
+	render.Status(r, http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 	render.JSON(w, r, updatedTreatment)
 }
 
@@ -200,7 +205,7 @@ func (config *TreatmentConfig) DeleteTreatmentHandler(w http.ResponseWriter, r *
 		})
 		return
 	}
-
+	
 	render.Status(r, http.StatusNoContent)
 }
 
@@ -231,5 +236,7 @@ func (config *TreatmentConfig) GetTreatmentByVisitHandler(w http.ResponseWriter,
 		})
 		return
 	}
+	w.Header().Set("Content-Type", "application/json")
+
 	render.JSON(w, r, treatments)
 }

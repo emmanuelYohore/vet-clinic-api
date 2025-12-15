@@ -9,9 +9,10 @@ import (
 
 type User struct {
 	gorm.Model
-	Email        string `gorm:"type:varchar(255);unique;not null" json:"email"`
-	Password     string `gorm:"type:varchar(255);not null" json:"password"`
-	RefreshToken string `json:"refresh_token"`
+	Email        string `gorm:"type:varchar(255);unique;not null"`
+	Password     string `gorm:"type:varchar(255);not null"`
+	Role         string `gorm:"type:varchar(50);default:'user'"`
+	RefreshToken string
 }
 
 type UserRepository interface {

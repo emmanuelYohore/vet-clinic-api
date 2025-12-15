@@ -6,9 +6,9 @@ import (
 )
 
 type UserRequest struct {
-	Email        string `json:"email"`
-	Password     string `json:"password"`
-	
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	Role     string `json:"role,omitempty"`
 }
 
 func (u *UserRequest) Bind(r *http.Request) error {
@@ -20,7 +20,6 @@ func (u *UserRequest) Bind(r *http.Request) error {
 		return errors.New("le champ password ne doit pas être vide")
 	}
 
-	
 	return nil
 
 }
@@ -28,5 +27,6 @@ func (u *UserRequest) Bind(r *http.Request) error {
 type UserResponse struct {
 	Email        string `json:"email"`
 	Password     string `json:"password"`
+	Role         string `json:"role"`
 	RefreshToken string `json:"refresh_token"`
 }

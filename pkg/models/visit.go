@@ -12,12 +12,12 @@ type VisitRequest struct {
 	Veterinaire string    `json:"veterinaire"`
 }
 
-func (v *VisitRequest)  Bind(r *http.Request) error{
+func (v *VisitRequest) Bind(r *http.Request) error {
 	if v.Motif == "" {
 		return errors.New("le champ motif ne doit pas être vide")
 	}
 
-	if v.Veterinaire== "" {
+	if v.Veterinaire == "" {
 		return errors.New("le champ veterinaire ne doit pas être vide")
 	}
 

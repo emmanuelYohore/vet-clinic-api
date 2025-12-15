@@ -24,13 +24,58 @@ func Routes(configuration *config.Config) *chi.Mux {
 
 	router.Group(func(r chi.Router) {
 		r.Use(authentification.AuthMiddleware("your_secret_key"))
-		r.Mount("/api/v1/cats", cat.Routes(configuration))
-		r.Mount("/api/v1/visits", visit.Routes(configuration))
-		r.Mount("/api/v1/treatments", treatment.Routes(configuration))
-		r.Mount("/api/v1/users", user.Routes(configuration))
+		catRoutes := cat.Routes(configuration)
+		r.Group(func(cr chi.Router) {
+			cr.Use(authentification.RequireRole("admin", "user"))
+			cr.Get("/api/v1/cats", catRoutes.ServeHTTP)
+			cr.Get("/api/v1/cats/{id}", catRoutes.ServeHTTP)
+			cr.Get("/api/v1/cats/{id}/history", catRoutes.ServeHTTP)
+		})
+
+		r.Group(func(cr chi.Router) {
+			cr.Use(authentification.RequireRole("admin"))
+			cr.Post("/api/v1/cats", catRoutes.ServeHTTP)
+			cr.Put("/api/v1/cats/{id}", catRoutes.ServeHTTP)
+			cr.Delete("/api/v1/cats/{id}", catRoutes.ServeHTTP)
+		})
+
+		visitRoutes := visit.Routes(configuration)
+		r.Group(func(vr chi.Router) {
+			vr.Use(authentification.RequireRole("admin", "user"))
+			vr.Get("/api/v1/visits", visitRoutes.ServeHTTP)
+			vr.Get("/api/v1/visits/{id}", visitRoutes.ServeHTTP)
+		})
+
+		r.Group(func(vr chi.Router) {
+			vr.Use(authentification.RequireRole("admin"))
+			vr.Post("/api/v1/visits", visitRoutes.ServeHTTP)
+			vr.Put("/api/v1/visits/{id}", visitRoutes.ServeHTTP)
+			vr.Delete("/api/v1/visits/{id}", visitRoutes.ServeHTTP)
+		})
+
+		treatmentRoutes := treatment.Routes(configuration)
+		r.Group(func(tr chi.Router) {
+			tr.Use(authentification.RequireRole("admin", "user"))
+			tr.Get("/api/v1/treatments", treatmentRoutes.ServeHTTP)
+			tr.Get("/api/v1/treatments/{id}", treatmentRoutes.ServeHTTP)
+		})
+
+		r.Group(func(tr chi.Router) {
+			tr.Use(authentification.RequireRole("admin"))
+			tr.Post("/api/v1/treatments", treatmentRoutes.ServeHTTP)
+			tr.Put("/api/v1/treatments/{id}", treatmentRoutes.ServeHTTP)
+			tr.Delete("/api/v1/treatments/{id}", treatmentRoutes.ServeHTTP)
+		})
+
+		r.Group(func(ur chi.Router) {
+			ur.Use(authentification.RequireRole("admin"))
+			ur.Mount("/api/v1/users", user.Routes(configuration))
+		})
+
 		r.Get("/protected", func(w http.ResponseWriter, req *http.Request) {
-			user := authentification.GetUserFromContext(req.Context())
-			w.Write([]byte(fmt.Sprintf("Welcome, %s!", user)))
+			userEmail := authentification.GetUserFromContext(req.Context())
+			userRole := authentification.GetRoleFromContext(req.Context())
+			w.Write([]byte(fmt.Sprintf("Welcome, %s! Your role: %s", userEmail, userRole)))
 		})
 	})
 

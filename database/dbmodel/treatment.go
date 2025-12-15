@@ -7,13 +7,13 @@ import (
 )
 
 type Treatment struct {
-	ID        uint       `gorm:"primarykey" json:"id"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
-	DeletedAt *time.Time `gorm:"index" json:"deleted_at,omitempty"`
-	Name      string     `json:"name"`
-	VisitID   uint       `json:"visit_id"`
-	Visit     Visit      `gorm:"foreignKey:VisitID" json:"visit"`
+	ID        uint `gorm:"primarykey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time
+	Name      string 
+	VisitID   uint 
+	Visit     Visit `gorm:"foreignKey:VisitID"`
 }
 
 type TreatmentRepository interface {

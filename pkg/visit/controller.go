@@ -56,6 +56,8 @@ func (config *VisitConfig) CreateVisitHandler(w http.ResponseWriter, r *http.Req
 	}
 
 	render.Status(r, http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+
 	render.JSON(w, r, savedVisit)
 }
 
@@ -75,6 +77,8 @@ func (config *VisitConfig) GetAllVisitsHandler(w http.ResponseWriter, r *http.Re
 		})
 		return
 	}
+	render.Status(r, http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 
 	render.JSON(w, r, visits)
 }
@@ -107,6 +111,8 @@ func (config *VisitConfig) GetVisitByIDHandler(w http.ResponseWriter, r *http.Re
 		})
 		return
 	}
+	render.Status(r, http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 
 	render.JSON(w, r, visit)
 }
@@ -164,6 +170,8 @@ func (config *VisitConfig) UpdateVisitHandler(w http.ResponseWriter, r *http.Req
 		})
 		return
 	}
+	render.Status(r, http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 
 	render.JSON(w, r, updatedVisit)
 }
@@ -204,7 +212,7 @@ func (config *VisitConfig) DeleteVisitHandler(w http.ResponseWriter, r *http.Req
 		})
 		return
 	}
-
+	
 	render.Status(r, http.StatusNoContent)
 }
 
@@ -219,7 +227,7 @@ func (config *VisitConfig) DeleteVisitHandler(w http.ResponseWriter, r *http.Req
 // @Router /cats/{id}/visits [get]
 func (config *VisitConfig) GetVisitsByCatHandler(w http.ResponseWriter, r *http.Request) {
 	idParam := chi.URLParam(r, "id")
-	id64, err := strconv.ParseUint(idParam, 10, 32)	
+	id64, err := strconv.ParseUint(idParam, 10, 32)
 	if err != nil {
 		render.Status(r, http.StatusBadRequest)
 		render.JSON(w, r, map[string]string{
@@ -235,6 +243,9 @@ func (config *VisitConfig) GetVisitsByCatHandler(w http.ResponseWriter, r *http.
 		})
 		return
 	}
+	
+	render.Status(r, http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 	render.JSON(w, r, visits)
 }
 
@@ -258,5 +269,7 @@ func (config *VisitConfig) FilterByMotifOrVeterinaireHandler(w http.ResponseWrit
 		})
 		return
 	}
+	render.Status(r, http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 	render.JSON(w, r, visits)
 }

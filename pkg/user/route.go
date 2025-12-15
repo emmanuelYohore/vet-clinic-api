@@ -11,6 +11,10 @@ func Routes(configuration *config.Config) *chi.Mux {
 	router := chi.NewRouter()
 
 	router.Post("/", userConfig.CreateUserHandler)
+	router.Get("/", userConfig.GetAllUsersHandler)
+	router.Get("/{id}", userConfig.GetUserByIDHandler)
+	router.Put("/{id}", userConfig.UpdateUserHandler)
+	router.Delete("/{id}", userConfig.DeleteUserHandler)
 
 	return router
 }
